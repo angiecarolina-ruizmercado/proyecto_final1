@@ -120,7 +120,7 @@ def normalizar_region(valor: Optional[str]) -> Optional[str]:
     texto = str(valor).strip().upper()  # Convierte a mayúsculas y elimina espacios
     sin_tildes = texto.translate(str.maketrans("ÁÉÍÓÚ", "AEIOU"))  # Quita tildes
 
-    # Corrige variaciones frecuentes de “PACÍFICA”
+    # Corrige variaciones frecuentes de "PACÍFICA"
     if sin_tildes in {"PACIFICO", "PACIFICA"}:
         return "PACÍFICA"
 
@@ -300,23 +300,26 @@ def img_to_base64(img_path):
         return None
 
 # ============================================================
-# Render del encabezado visual
+# Render del encabezado visual - FUNCIÓN CORREGIDA
 # ============================================================
 
 def render_header(df):
     """Dibuja banner, CSS y métricas del dataset."""
 
     banner_base64 = img_to_base64("img/verde2.png")
-    # Si la imagen existe, configura CSS para usarla
+    
+    # ✅ SOLUCIÓN: SIEMPRE definir background_css con un valor por defecto
+    background_css = 'background: linear-gradient(135deg, #88C999, #A8E55A, #4E7F96);'
+    
+    # Si la imagen existe, sobreescribe con el fondo de imagen
     if banner_base64:
-        background_css = (f'background-image: url("data:image/png;base64,{banner_base64}");')
+        background_css = f'background-image: url("data:image/png;base64,{banner_base64}"); background-size: cover; background-position: center;'
 
     # Inserta estilos personalizados
     st.markdown(
         f"""
         <style>
-        /* muchos estilos CSS (encabezado, métricas, banner, botones) */
-                [data-testid="stHeader"] {{
+        [data-testid="stHeader"] {{
             background: linear-gradient(90deg, #88C999, #A8E55A) !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }}
@@ -326,73 +329,69 @@ def render_header(df):
         [data-testid="stAppViewContainer"], body {{
             background-color: #E6FFF7 !important;
             font-family: 'Arial', sans-serif;
-            }}
+        }}
         div[data-testid="stMetric"] {{
-                background: rgba(255, 255, 255, 0.9);
-                padding: 0.5rem 3rem;
-                border-radius: 0.75rem;
-                border: 2px solid rgba(74, 154, 135, 0.6);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-                margin: 0.01rem auto;
-                max-width: 200px;
-                border: 2px solid rgba(74, 154, 135, 0.6);
-            }}
-
-                .metric {{
-                    background: #F0FFF4;
-                    padding: 15px;
-                    border-radius: 8px;
-                    border-left: 5px solid #A8E55A;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                    text-align: center;
-                }}
-                .banner-container {{
-                    position: relative;
-                    width: 100%;
-                    height: 220px;
-                    {background_css}
-                    background-size: cover;
-                    background-position: center;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border-radius: 10px;
-                    border-bottom: 3px solid #c9b79c;
-                    margin-bottom: 1.5rem;
-                    overflow: hidden;
-                }}
-                button {{
-                background: linear-gradient(45deg, #A8E55A, #88C999);
-                color: #1C3B2F;
-                border: none;
-                padding: 12px 20px;
-                font-weight: bold;
-                cursor: pointer;
-                border-radius: 8px;
-                transition: all 0.3s ease;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                }}
-                button:hover {{
-                    background: linear-gradient(45deg, #9CD25B, #7BBF8A);
-                    color: #0F261D;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                }}
-                .banner-container::before {{
-                    content: "";
-                    position: absolute;
-                    inset: 0;
-                    background: linear-gradient(45deg, rgba(0,0,0,0.45), rgba(0,0,0,0.15));
-                }}
-                .banner-container h1 {{
-                    position: relative;
-                    color: #ffffff;
-                    font-size: 2.2rem;
-                    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
-                    margin: 0;
-                    padding: 0 1rem;
-                    text-align: center;
-                }}
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 3rem;
+            border-radius: 0.75rem;
+            border: 2px solid rgba(74, 154, 135, 0.6);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin: 0.01rem auto;
+            max-width: 200px;
+        }}
+        .metric {{
+            background: #F0FFF4;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #A8E55A;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }}
+        .banner-container {{
+            position: relative;
+            width: 100%;
+            height: 220px;
+            {background_css}
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border-bottom: 3px solid #c9b79c;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }}
+        button {{
+            background: linear-gradient(45deg, #A8E55A, #88C999);
+            color: #1C3B2F;
+            border: none;
+            padding: 12px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        button:hover {{
+            background: linear-gradient(45deg, #9CD25B, #7BBF8A);
+            color: #0F261D;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }}
+        .banner-container::before {{
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, rgba(0,0,0,0.45), rgba(0,0,0,0.15));
+        }}
+        .banner-container h1 {{
+            position: relative;
+            color: #ffffff;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+            margin: 0;
+            padding: 0 1rem;
+            text-align: center;
+        }}
         </style>
         <div class="banner-container">
             <h1>Basura Cero | Economía Circular</h1>
@@ -408,7 +407,14 @@ def render_header(df):
     col1, col2, col3 = st.columns(3)
     col1.metric("Registros", f"{len(df):,}")
     col2.metric("Columnas", df.shape[1])
-    col3.metric("Departamentos", df["DEPARTAMENTO"].nunique())
+    
+    # ✅ Manejo seguro para departamentos
+    if "DEPARTAMENTO" in df.columns:
+        dept_count = df["DEPARTAMENTO"].nunique()
+    else:
+        dept_count = "N/A"
+    
+    col3.metric("Departamentos", dept_count)
 
 # ============================================================
 # Resumen textual automático
